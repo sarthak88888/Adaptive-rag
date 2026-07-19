@@ -6,6 +6,6 @@ class GraphState(TypedDict):
     session_id: str
     route: Optional[str]
     documents: Optional[List[str]]
+    relevant: Optional[str]
     generation: Optional[str]
-    web_search_needed: Optional[bool]
     messages: Optional[List[BaseMessage]]
