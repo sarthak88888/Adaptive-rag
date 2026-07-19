@@ -11,3 +11,23 @@ def retrieve_documents(query: str, session_id: str) -> str:
     if not results:
         return "No relevant documents found."
     return "\n\n".join([doc.page_content for doc in results])
+
+from src.llms.gemini import llm
+from src.models.route_identifier import RouteIdentifier
+from src.models.grade import Grade
+from src.config.settings import CLASSIFY_PROMPT, GRADING_PROMPT, REWRITE_PROMPT
+
+def classify_query(query: str) -> str:
+    structured_llm = llm.with_structured_output(RouteIdentifier)
+    result = structured_llm.invoke(f"{CLASSIFY_PROMPT}\n\nQuestion: {query}")
+    return result.route
+
+def grade_documents(query: str, documents: str) -> str:
+    structured_llm = llm.with_structured_output(Grade)
+    prompt = f"{GRADING_PROMPT}\n\nQuestion: {query}\n\nDocument: {documents}"
+    result = structured_llm.invoke(prompt)
+    return result.binary_score
+
+def rewrite_query(query: str) -> str:
+    response = llm.invoke(f"{REWRITE_PROMPT}\n\nOriginal query: {query}")
+    return response.text

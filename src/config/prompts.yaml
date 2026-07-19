@@ -14,6 +14,7 @@ rewrite_prompt: |
   You are a query rewriter. The original query did not retrieve relevant documents.
   Rewrite the query to be more specific and likely to retrieve relevant results,
   while preserving the original intent.
+  Respond with ONLY the rewritten query text. No explanation, no preamble, no labels, no markdown.
 
 generate_prompt: |
   You are an assistant answering questions using the provided context.
