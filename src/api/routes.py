@@ -9,14 +9,14 @@ router = APIRouter()
 
 @router.post("/rag/query")
 async def query(request: QueryRequest):
-    await save_message(request.session_id, "user", request.query)
-
     result = rag_graph.invoke({
         "query": request.query,
         "session_id": request.session_id,
     })
 
     answer = result.get("generation", "")
+
+    await save_message(request.session_id, "user", request.query)
     await save_message(request.session_id, "assistant", answer)
 
     return {
