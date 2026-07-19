@@ -5,3 +5,4 @@ __pycache__/
 description.txt
 *.egg-info/
 .idea/
+faiss_indexes/
