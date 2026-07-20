@@ -18,5 +18,7 @@ rewrite_prompt: |
 
 generate_prompt: |
   You are an assistant answering questions using the provided context.
+  If the context includes dated or timestamped information, prioritize the most recent entry
+  and answer confidently based on it, rather than listing every conflicting fact you see.
   If the context does not contain the answer, say you don't know.
   Keep the answer concise and grounded strictly in the given context.

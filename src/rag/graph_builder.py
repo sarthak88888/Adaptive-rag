@@ -2,7 +2,7 @@ from langgraph.graph import StateGraph, END
 from src.models.state import GraphState
 from src.llms.gemini import llm
 from src.config.settings import GENERATE_PROMPT
-from src.tools.graph_tools import classify_query, grade_documents, rewrite_query
+from src.tools.graph_tools import classify_query, grade_documents, rewrite_query, web_search
 from src.rag.reAct_agent import agent_executor
 from src.rag.retriever_setup import session_index_exists, load_session_retriever
 
@@ -26,6 +26,11 @@ def retriever_node(state: GraphState) -> dict:
         if type(msg).__name__ == "ToolMessage"
     ]
     return {"documents": documents}
+
+
+def web_search_node(state: GraphState) -> dict:
+    result = web_search(state["query"])
+    return {"documents": [result]}
 
 
 def grade_node(state: GraphState) -> dict:
@@ -64,6 +69,7 @@ def build_graph():
 
     graph.add_node("query_analysis", query_analysis_node)
     graph.add_node("retriever", retriever_node)
+    graph.add_node("web_search", web_search_node)
     graph.add_node("grade", grade_node)
     graph.add_node("rewrite", rewrite_node)
     graph.add_node("generate", generate_node)
@@ -77,11 +83,12 @@ def build_graph():
         {
             "index": "retriever",
             "general": "general_llm",
-            "search": "retriever",
+            "search": "web_search",
         },
     )
 
     graph.add_edge("retriever", "grade")
+    graph.add_edge("web_search", "grade")
 
     graph.add_conditional_edges(
         "grade",
