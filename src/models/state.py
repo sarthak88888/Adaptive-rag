@@ -7,5 +7,6 @@ class GraphState(TypedDict):
     route: Optional[str]
     documents: Optional[List[str]]
     relevant: Optional[str]
+    source: Optional[str]
     generation: Optional[str]
     messages: Optional[List[BaseMessage]]

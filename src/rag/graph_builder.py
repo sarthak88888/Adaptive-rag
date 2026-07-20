@@ -25,12 +25,12 @@ def retriever_node(state: GraphState) -> dict:
         msg.content for msg in result["messages"]
         if type(msg).__name__ == "ToolMessage"
     ]
-    return {"documents": documents}
+    return {"documents": documents, "source": "retriever"}
 
 
 def web_search_node(state: GraphState) -> dict:
     result = web_search(state["query"])
-    return {"documents": [result]}
+    return {"documents": [result], "source": "web_search"}
 
 
 def grade_node(state: GraphState) -> dict:
@@ -62,6 +62,10 @@ def route_decision(state: GraphState) -> str:
 
 def grade_decision(state: GraphState) -> str:
     return "generate" if state["relevant"] == "yes" else "rewrite"
+
+
+def rewrite_source_decision(state: GraphState) -> str:
+    return state["source"]
 
 
 def build_graph():
@@ -99,7 +103,15 @@ def build_graph():
         },
     )
 
-    graph.add_edge("rewrite", "retriever")
+    graph.add_conditional_edges(
+        "rewrite",
+        rewrite_source_decision,
+        {
+            "retriever": "retriever",
+            "web_search": "web_search",
+        },
+    )
+
     graph.add_edge("generate", END)
     graph.add_edge("general_llm", END)
 
