@@ -38,3 +38,18 @@ def grade_documents(query: str, documents: str) -> str:
 def rewrite_query(query: str) -> str:
     response = llm.invoke(f"{REWRITE_PROMPT}\n\nOriginal query: {query}")
     return response.text
+
+from tavily import TavilyClient
+from src.core.config import TAVILY_API_KEY
+
+tavily_client = TavilyClient(api_key=TAVILY_API_KEY)
+
+
+def web_search(query: str) -> str:
+    response = tavily_client.search(query, max_results=3)
+    results = response.get("results", [])
+    if not results:
+        return "No web search results found."
+    return "\n\n".join(
+        f"{r.get('title', '')}: {r.get('content', '')}" for r in results
+    )
