@@ -227,13 +227,6 @@ Upload a document (a resume, a report, anything), then ask questions about it �
 - Multi-document upload per session
 
 ---
-
-## 📄 License
-
-MIT
-
----
-
 ## 👤 Author
 
 **Sarthak Pundir**
